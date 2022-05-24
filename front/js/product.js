@@ -46,22 +46,43 @@ let product = {
     color: ""
 }
 
-fetch(monApi).then((response) =>
-response.json()
-.then((data) => {
-    let tabProduct = [];
-    bouton.addEventListener("click", function() {
-        let id = data._id;
-        let qty = document.querySelector("#quantity").value;
-        let price = `${data.price*document.querySelector("#quantity").value}€`; //  * qty of input
-        let colour = document.querySelector("#colors").value;
+function getProductInfo(productObject, productData) {
+    let id = productData._id;
+    let qty = document.querySelector("#quantity").value;
+    let price = productData.price*document.querySelector("#quantity").value; //  * qty of input
+    let colour = document.querySelector("#colors").value;
+    productObject.id = id;
+    productObject.qty=qty;
+    productObject.price=price;
+    productObject.color=colour;
+    return productObject;
+}
 
-        product.id = id;
-        product.qty=qty;
-        product.price=price;
-        product.color=colour;
-        
-        tabProduct.push(product);
+bouton.addEventListener("click", function() {
+    if (localStorage.getItem("product_list") === null) { // si mon localstorage ne contient pas la clé product_list
+        let tabProduct = []; // je créé le tableau qui servira de valeur à cette clé
+        fetch(monApi).then((response) =>
+        response.json()
+        .then((data) => {
+            tabProduct.push(getProductInfo(product, data));
+    
+            localStorage.setItem(`product_list`, JSON.stringify(tabProduct));
+        })); //json.stringify pour stocker des objets sous forme json
+    } else {
+        fetch(monApi).then((response) =>
+        response.json()
+        .then((data) => {
+            let tabProduct = JSON.parse(localStorage.getItem(`product_list`)); // je récup le contenu du localstorage (qui est en string de base mais qui devient un tableau avec JSON.parse)
 
-        localStorage.setItem(`product_list`, JSON.stringify(tabProduct));
-    })})); //json.stringify pour stocker des objets sous forme json
+            tabProduct.push(getProductInfo(product, data));
+            localStorage.setItem(`product_list`, JSON.stringify(tabProduct));
+        })); 
+    }
+});
+
+
+
+
+
+
+
