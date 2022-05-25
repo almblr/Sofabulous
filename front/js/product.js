@@ -1,19 +1,21 @@
-/// FICHE PRODUIT ///
-/// FICHE PRODUIT ///
-/// FICHE PRODUIT ///
+////////////////////////// FICHE PRODUIT //////////////////////////
+////////////////////////// FICHE PRODUIT //////////////////////////
+////////////////////////// FICHE PRODUIT //////////////////////////
 
-let monApi = "http://localhost:3000/api/products/"; // On déclare une variable pour stocker l'API
+
+
+let monApi = "http://localhost:3000/api/products/";
 const image = document.querySelector(".item__img");
 const title = document.querySelector("#title");
 const price = document.querySelector("#price");
 const description = document.querySelector("#description");
 const couleurs = document.querySelector("#colors");
-const str = window.location; // renvoie le lien de l'URL actuelle sous forme de string
-const url = new URL(str); // créé un URL qui a la valeur de la string au-dessus pour use searchParams
-const idProduit = url.searchParams.get("id"); // Je récup la partie ID du lien
+const str = window.location; // Return l'URL actuelle sous forme de str(ing)
+const url = new URL(str); // vv searchParams vv fonctionne avec un url
+const idProduit = url.searchParams.get("id"); // Récup' la partie ID du lien
 
 
-monApi += `${idProduit}`; // du coup le nouveau lien de mon api sera le lien précédent suivi de l'ID produit
+monApi += `${idProduit}`; // return API de base + ID Produit
 
 fetch(monApi)
     .then((response) => response.json())
@@ -28,48 +30,49 @@ fetch(monApi)
     })
     .catch(erreur => console.log("Error 4 sans Kanap"));
 
-/// AJOUTER AU PANIER ///
-/// AJOUTER AU PANIER ///
-/// AJOUTER AU PANIER ///
+////////////////////////// ADD TO CART //////////////////////////
+////////////////////////// ADD TO CART //////////////////////////
+////////////////////////// ADD TO CART //////////////////////////
 
 const bouton = document.querySelector("#addToCart");
 let product = {
     id : 0,
     qty : 0,
-    price : 0,
     color: ""
-}
+};
 
+// productInfo créé & remplace les variables des infos produits (prix, couleur...) de façon dynamique
 function ProductInfo(productObject, productData) {
     let id = productData._id;
-    let qty = parseInt(document.querySelector("#quantity").value); // parseInt : transforme un type strin en type number
-    let price = productData.price*document.querySelector("#quantity").value; //  * qty of input
+    let qty = parseInt(document.querySelector("#quantity").value); // parseInt : Tranform type str en type number
     let colour = document.querySelector("#colors").value;
     productObject.id = id;
     productObject.qty=qty;
-    productObject.price=price;
     productObject.color=colour;
     return productObject;
-}
+};
 
 bouton.addEventListener("click", function() {
-    if (localStorage.getItem("product_list") === null) { // si mon localstorage ne contient pas la clé product_list
+    if (localStorage.getItem("product_list") === null) { // si le localstorage ne contient pas la clé product_list
         let tabProduct = []; // je créé le tableau qui servira de valeur à cette clé
         fetch(monApi)
             .then((response) => response.json())
             .then((data) => {
+                tabProduct.push(ProductInfo(product, data)); // push l'objet dans le tableau 
+                localStorage.setItem(`product_list`, JSON.stringify(tabProduct)); // met les données du produit dans le localstorage
+                alert("L'article a bien été ajouté dans votre panier.")
+            }) //json.stringify pour stocker des objets sous forme json
+            .catch(erreur => console.log("Error 4 sans Kanap"));
+    } else {  // Sinon, ajoute des objets (produit) dans le tableau existants
+        fetch(monApi)
+            .then((response) => response.json())
+            .then((data) => {
+                let tabProduct = JSON.parse(localStorage.getItem(`product_list`)); // Récup le contenu du localstorage sous format JSON (il est en string de base)
                 tabProduct.push(ProductInfo(product, data));
                 localStorage.setItem(`product_list`, JSON.stringify(tabProduct));
-            }); //json.stringify pour stocker des objets sous forme json
-    } else {
-        fetch(monApi)
-        .then((response) => response.json())
-        .then((data) => {
-            let tabProduct = JSON.parse(localStorage.getItem(`product_list`)); // je récup le contenu du localstorage (qui est en string de base mais qui devient un tableau avec JSON.parse)
-
-            tabProduct.push(ProductInfo(product, data));
-            localStorage.setItem(`product_list`, JSON.stringify(tabProduct));
-        }); 
+                alert("L'article a bien été ajouté dans votre panier.")
+            })
+        .catch(erreur => console.log("Error 4 sans Kanap"));
     }
 });
 
