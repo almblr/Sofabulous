@@ -23,9 +23,10 @@ fetch(monApi)
         image.innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`
         title.innerText = data.name;
         price.innerText = data.price;
-        description.innerHTML = data.description;
+        description.innerHTML = data.description; // à mettre en innerText
         for (let color of data.colors) {
             couleurs.innerHTML += `<option value ="${color}">${color}</option>`
+            // pareil que mon innerHTML dans le script (pas ouf côté perf)
         };
     })
     .catch(erreur => console.log("Error 4 sans Kanap"));
@@ -35,6 +36,7 @@ fetch(monApi)
 ////////////////////////// ADD TO CART //////////////////////////
 
 const bouton = document.querySelector("#addToCart");
+
 let product = {
     id : 0,
     qty : 0,
@@ -76,9 +78,9 @@ bouton.addEventListener("click", function() {
     }
 });
 
+/// Ne pas avoir de doublon, additioner les quantités pour chaque item
 
 
-
-
+//// essayer de faire fonctionner le code avec unseul fetch plutôt que trois (enregistrer les données et les re use)
 
 

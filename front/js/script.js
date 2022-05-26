@@ -11,3 +11,6 @@ fetch(monApi)
         } // Ajoute l'HTML ci-dessus dans la section pour tous les produits dans le tableau data (les 8 canapés)
 
     });
+
+
+    /// refaire le for avec create element mais pas supp le innerHTML mais le commenter. create element + lourde mais meilleure en perfs (ma solution recréé à chaque fois les élements)
