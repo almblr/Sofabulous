@@ -1,16 +1,26 @@
 const monApi = "http://localhost:3000/api/products/"; // On déclare une variable pour stocker l'API
 const section = document.querySelector("#items");
 
+function addElement(i) {
+    const newLink = document.createElement("a");
+    newLink.setAttribute("href", `product.html?id=${i._id}`);
+    const newArticle = document.createElement("article");
+    const newImg = document.createElement("img");
+    newImg.setAttribute("src", `${i.imageUrl}`);
+    newImg.setAttribute("alt", `${i.altTxt}`);
+    const newTitle = document.createElement("h3");
+    const newParagraph = document.createElement("p");
+    newParagraph.innerText = `${i.description}`;
+    section.appendChild(newLink);
+    newLink.appendChild(newArticle);
+    newArticle.appendChild(newImg);
+    newArticle.appendChild(newTitle);
+    newArticle.appendChild(newParagraph);
+};
 
 fetch(monApi)
     .then((response) => response.json())
     .then((data) => {
-        console.log(data);
         for (let item of data) {
-            section.innerHTML += `<a href="product.html?id=${item._id}"><article><img src="${item.imageUrl}" alt="${item.altTxt}"> <h3>${item.name}</h3><p>${item.description}</p></article>`;
-        } // Ajoute l'HTML ci-dessus dans la section pour tous les produits dans le tableau data (les 8 canapés)
-
-    });
-
-
-    /// refaire le for avec create element mais pas supp le innerHTML mais le commenter. create element + lourde mais meilleure en perfs (ma solution recréé à chaque fois les élements)
+            addElement(item);
+    }});

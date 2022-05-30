@@ -82,5 +82,6 @@ bouton.addEventListener("click", function() {
 
 
 //// essayer de faire fonctionner le code avec unseul fetch plutôt que trois (enregistrer les données et les re use)
+/// fusion des produis : array.find
 
-
+/// rebooser l'index et product avant de partir sur cart
