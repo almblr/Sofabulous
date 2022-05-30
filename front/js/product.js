@@ -1,9 +1,9 @@
 let monApi = "http://localhost:3000/api/products/";
 const str = window.location; // Return l'URL actuelle sous forme de str(ing)
-const url = new URL(str); // vv searchParams vv fonctionne avec un url
+const url = new URL(str); // searchParams fonctionne avec une url
 const idProduit = url.searchParams.get("id"); // Récup' la partie ID du lien
-monApi += `${idProduit}`; // return API de base + ID Produit
-
+monApi += `${idProduit}`; // Return API de base + ID Produit
+/// DOM ///
 const image = document.querySelector(".item__img");
 const title = document.querySelector("#title");
 const price = document.querySelector("#price");
@@ -11,14 +11,14 @@ const description = document.querySelector("#description");
 const couleurs = document.querySelector("#colors");
 const bouton = document.querySelector("#addToCart");
 
-let product = { // Produit "vide"
+let product = { // Produit "template"
     id : 0,
     qty : 0,
     color: ""
 };
 
 // Créé & remplace les variables des infos produits de façon dynamique avec les éléments déjà existants sur la page (price qty color) et ceux de l'api (id product)
-function ProductInfo(productObject, productData) {
+function ProductInfo(productObject, productData, tabLS) {
     let id = productData._id;
     let qty = parseInt(document.querySelector("#quantity").value); // parseInt : Convert type str into type nbr
     let colour = document.querySelector("#colors").value;
@@ -34,9 +34,9 @@ function ProductInfo(productObject, productData) {
  * @param {*} tabData 
  * @param {*} productData 
  */
-function addToLocalStorage(tabLocStorage, tabData, productData) {
-    tabLocStorage.push(ProductInfo(productData, tabData)); // push l'objet dans le tableau 
-    localStorage.setItem(`product_list`, JSON.stringify(tabLocStorage)); // met les données du produit dans le localstorage
+function addToLocalStorage(objLocStorage, tabData, productData) {
+    objLocStorage.push(ProductInfo(productData, tabData)); // push l'objet dans le tableau 
+    localStorage.setItem(`product_list`, JSON.stringify(objLocStorage)); // met les données du produit dans le localstorage
     alert("L'article a bien été ajouté dans votre panier.")
     //json.stringify pour stocker des objets sous forme json
 };
