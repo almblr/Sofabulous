@@ -10,7 +10,7 @@ function addElement(i) {
     newImg.setAttribute("alt", `${i.altTxt}`);
     const newTitle = document.createElement("h3");
     const newParagraph = document.createElement("p");
-    newParagraph.innerText = `${i.description}`;
+    newParagraph.innerText = i.description;
     section.appendChild(newLink);
     newLink.appendChild(newArticle);
     newArticle.appendChild(newImg);
@@ -23,4 +23,5 @@ fetch(monApi)
     .then((data) => {
         for (let item of data) {
             addElement(item);
-    }});
+    }
+});

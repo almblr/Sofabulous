@@ -25,8 +25,10 @@ fetch(monApi)
         price.innerText = data.price;
         description.innerHTML = data.description; // à mettre en innerText
         for (let color of data.colors) {
-            couleurs.innerHTML += `<option value ="${color}">${color}</option>`
-            // pareil que mon innerHTML dans le script (pas ouf côté perf)
+            const newOption = document.createElement("option");
+            newOption.setAttribute("value", `${color}`);
+            newOption.innerText = color;
+            couleurs.appendChild(newOption);
         };
     })
     .catch(erreur => console.log("Error 4 sans Kanap"));
