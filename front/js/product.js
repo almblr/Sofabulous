@@ -30,7 +30,7 @@ function addToLocalStorage(objLocStorage, tabData, productData) {
         objLocStorage.push(ProductInfo(tabData)); // Je push mon nouvel objet dans mon tableau du LS
         alert("L'article a bien été ajouté dans votre panier.")
     }
-    localStorage.setItem(`product_list`, JSON.stringify(objLocStorage)); // Update le LS - json.stringify pour stocker des objets sous forme json
+    localStorage.setItem(`product_list`, JSON.stringify(objLocStorage)); // Update le LS - json.stringify convertir une valeur JS en chaîne JSON
 };
 
 fetch(monApi)
