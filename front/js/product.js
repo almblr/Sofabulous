@@ -11,34 +11,28 @@ const description = document.querySelector("#description");
 const couleurs = document.querySelector("#colors");
 const bouton = document.querySelector("#addToCart");
 
-let product = { // Produit "template"
-    id : 0,
-    qty : 0,
-    color: ""
-};
-
 // Créé & remplace les variables des infos produits de façon dynamique avec les éléments déjà existants sur la page (price qty color) et ceux de l'api (id product)
-function ProductInfo(productObject, productData, tabLS) {
-    let id = productData._id;
-    let qty = parseInt(document.querySelector("#quantity").value); // parseInt : Convert type str into type nbr
-    let colour = document.querySelector("#colors").value;
-    productObject.id = id;
-    productObject.qty=qty;
-    productObject.color=colour;
-    return productObject;
+function ProductInfo(dataAPI) {
+    return productObject = {
+        id : dataAPI._id,
+        qty : parseInt(document.querySelector("#quantity").value), // parseInt : Convert type str into type nbr
+        color : document.querySelector("#colors").value
+    };
 };
 
-/**
- * Ajoute les items dans le localstorage
- * @param {array} tabLocStorage - Tableau d'objets local storage
- * @param {*} tabData 
- * @param {*} productData 
- */
+
 function addToLocalStorage(objLocStorage, tabData, productData) {
-    objLocStorage.push(ProductInfo(productData, tabData)); // push l'objet dans le tableau 
-    localStorage.setItem(`product_list`, JSON.stringify(objLocStorage)); // met les données du produit dans le localstorage
-    alert("L'article a bien été ajouté dans votre panier.")
-    //json.stringify pour stocker des objets sous forme json
+    let foundProduct = objLocStorage.find(elementInLS => elementInLS.id === productData.id && elementInLS.color === productData.color);
+    console.log(productData);
+    if(foundProduct) { 
+        foundProduct.qty += productData.qty; // J'update la quantité de l'article déjà présent avec la quantité de l'article que j'ajoute
+        alert(`La quantité de votre article a été actualisée !`)
+    } 
+    if (foundProduct == undefined) { // Si l'ID et la couleur sont différents 
+        objLocStorage.push(ProductInfo(tabData)); // Je push mon nouvel objet dans mon tableau du localstorage
+        alert("L'article a bien été ajouté dans votre panier.")
+    }
+    localStorage.setItem(`product_list`, JSON.stringify(objLocStorage)); // met les données du produit dans le localstorage - json.stringify pour stocker des objets sous forme json
 };
 
 fetch(monApi)
@@ -57,11 +51,11 @@ fetch(monApi)
         bouton.addEventListener("click", function() {
             if (localStorage.getItem("product_list")) {  
                 let tabProduct = JSON.parse(localStorage.getItem(`product_list`)); // Récup le contenu du localstorage sous format JSON (il est en string de base)
-                addToLocalStorage(tabProduct, data, product);
+                addToLocalStorage(tabProduct, data, ProductInfo(data));
             }
             if (localStorage.getItem("product_list") === null) { // si le localstorage ne contient pas la clé product_list
                 let tabProduct = []; // je créé le tableau qui servira de valeur à cette clé
-                addToLocalStorage(tabProduct, data, product);
+                addToLocalStorage(tabProduct, data, ProductInfo(data));
             } 
 
         })
