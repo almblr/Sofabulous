@@ -7,8 +7,10 @@ function getLocalStorage() {
 };
 // fillCart sert à remplir la page panier avec les produits ajoutés au panier
 function fillCart() {
+    let promises = [];
     let tabLStrorage = getLocalStorage();
-        for (let product of tabLStrorage) {
+    for (let product of tabLStrorage) {
+        const promise = new Promise(async(resolve) => {
             /// Création de la balise article ///
             const article = document.createElement("article");
             article.classList.add("cart__item");
@@ -17,9 +19,8 @@ function fillCart() {
             sectionItem.appendChild(article);
             /// Fin - Création de la balise article ///
             let monApi = `http://localhost:3000/api/products/${product.id}`; // Car je veux les infos de chaque produit individuellement
-            fetch(monApi) // Pour récupérer les autres informatiques des produits 
-            .then((response) => response.json())
-            .then((data) => { // Ici mon data est un objet et non un tableau !
+            const response = await fetch(monApi) // Pour récupérer les autres informatiques des produits 
+            const data = await response.json() // Ici mon data est un objet et non un tableau !
             /// Div cart__item__img ///
             const divCartItemImg = document.createElement("div");
             divCartItemImg.classList.add("cart__item__img");
@@ -72,20 +73,31 @@ function fillCart() {
             divSettingsQty.appendChild(inputQty);
             divSettings.appendChild(divDelete);
             divDelete.appendChild(pDelete);
-        })
+            resolve();
+        });
+        promises.push(promise)
     }
-}
-fillCart();
-
-
-
-
-let a = document.getElementsByClassName("itemQuantity");
-for (input of a) {
-    console.log(input.value);
+    return promises;
 }
 
-console.log(a);
+const promises = fillCart();
+Promise.all(promises).then(() => { // nous dit quand ttes les promesses sont terminées et lance le .then si c'est le cas
+    console.log(document.getElementsByClassName("itemQuantity"));
+    let input = Array.from(document.querySelectorAll(".itemQuantity"));
+    console.log(input);
+})
+
+
+
+
+
+function consoleItem(item) {
+    // console.log(item);
+}
+// input.addEventListener("change", function() {
+//     console.log("coucou");
+//     })
+
 
 
 
@@ -94,3 +106,7 @@ console.log(a);
 
 
 
+// getElementByClassName est une interface de collection d'élements qui ressemble à un tableau mais n'est pas pas vraiment un. Du coup faut d'abord transformer le contenu en tableau avec [...elements].forEach ou Array.from(elements).forEach()
+
+
+// mélanger createElement (sur l'élément parent) avec innerHTML (pour remplir le parent) 
