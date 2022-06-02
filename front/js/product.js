@@ -36,7 +36,7 @@ function addToLocalStorage(objLocStorage, tabData, productData) {
 fetch(monApi)
     .then((response) => response.json())
     .then((data) => {
-        image.innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`
+        image.innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">` // créer l'image puis l'appenchild
         title.innerText = data.name;
         price.innerText = data.price;
         description.innerText = data.description;
@@ -57,3 +57,6 @@ fetch(monApi)
             } 
         })
     });     
+
+
+    // enlever le deuxième if en rajoutant un return dans le premier
