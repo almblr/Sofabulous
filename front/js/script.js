@@ -1,5 +1,5 @@
 let monApi = "http://localhost:3000/api/products/"; // On déclare une variable pour stocker l'API
-const section = document.querySelector("#items"); // On sélectionne la section en en HTML
+const section = document.querySelector("#items");
 
 fetch(monApi)
     .then((response) => response.json())
@@ -7,18 +7,13 @@ fetch(monApi)
         for (let item of data) {
             const newLink = document.createElement("a");
             newLink.setAttribute("href", `product.html?id=${item._id}`);
-            const newArticle = document.createElement("article");
-            const newImg = document.createElement("img");
-            newImg.setAttribute("src", `${item.imageUrl}`);
-            newImg.setAttribute("alt", `${item.altTxt}`);
-            const newTitle = document.createElement("h3");
-            const newParagraph = document.createElement("p");
-            newParagraph.innerText = item.description;
-            section.appendChild(newLink);
-            newLink.appendChild(newArticle);
-            newArticle.appendChild(newImg);
-            newArticle.appendChild(newTitle);
-            newArticle.appendChild(newParagraph);
+            newLink.innerHTML = /*HTML*/`
+            <article>
+                <img src="${item.imageUrl}" alt="${item.altTxt}">
+                <h3 class="productName">${item.name}</h3>
+                <p class="productDescription">${item.description}</p>
+            </article>`
+             section.appendChild(newLink)
         };
     }
 );
