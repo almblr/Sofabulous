@@ -8,11 +8,11 @@ fetch(monApi)
             const newLink = document.createElement("a");
             newLink.setAttribute("href", `product.html?id=${item._id}`);
             newLink.innerHTML = /*HTML*/`
-            <article>
-                <img src="${item.imageUrl}" alt="${item.altTxt}">
-                <h3 class="productName">${item.name}</h3>
-                <p class="productDescription">${item.description}</p>
-            </article>`
+                <article>
+                    <img src="${item.imageUrl}" alt="${item.altTxt}">
+                    <h3 class="productName">${item.name}</h3>
+                    <p class="productDescription">${item.description}</p>
+                </article>`
              section.appendChild(newLink)
         };
     }

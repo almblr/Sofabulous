@@ -23,8 +23,13 @@ function ProductInfo(dataAPI) {
         color : document.querySelector("#colors").value
     };
 };
+/**
+ * Sert à mettre à jour le LS
+ * @param {*} key Clé 
+ * @param {*} tab Tableau à stocker dans le LS
+ */
 function saveBasket(key, tab) {
-    localStorage.setItem(key, JSON.stringify(tab))
+    localStorage.setItem(key, JSON.stringify(tab)) // json.stringify convertit une valeur JS en chaîne JSON (essentiel pour stocker dans le LS)
 };
 /**
  * Ajoute l'article dans le panier selon et s'il est déjà présent, actualise sa quantité
@@ -42,7 +47,7 @@ function addToLocalStorage(objLocStorage, tabData, productData) {
         objLocStorage.push(ProductInfo(tabData)); // Je push mon nouvel objet dans mon tableau du LS
         alert("L'article a bien été ajouté dans votre panier.")
     }
-    saveBasket("product_list", objLocStorage)  // Update le LS - json.stringify convertir une valeur JS en chaîne JSON
+    saveBasket("product_list", objLocStorage)  
 };
 
 fetch(monApi)
