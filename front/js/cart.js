@@ -1,18 +1,10 @@
 let sectionItem = document.querySelector("#cart__items");
-/**
- * Récupère et retourne le contenu du locStorage (JSON.Parse transforme un string en objet JSON)
- * @returns Le contenu du LS
- */
-function getLocalStorage() {
-    let content = JSON.parse(localStorage.getItem(`product_list`));
-    return content;
-};
+let contentLS = JSON.parse(localStorage.getItem(`product_list`));
 
 // fillCart sert à remplir la page panier avec les produits ajoutés au LS
 function fillCart() {
     let promises = [];
-    let arrayLS = getLocalStorage();
-    for (let product of arrayLS) {
+    for (let product of contentLS) {
         const promise = new Promise(async (resolve) => { // Y a autant de promesses que de produits
             let monApi = `http://localhost:3000/api/products/${product.id}`; // Car je veux les infos de chaque produit
             const response = await fetch(monApi) // Pour récupérer les autres infos des produits
@@ -49,67 +41,71 @@ function fillCart() {
     }
     return promises;
 }
+/////////////////////////////////////
+/////////////////////////////////////
+/////////////////////////////////////
 
 const promises = fillCart();
-
 Promise.all(promises).then(() => { // Return .then si ttes les promesses sont réussies/terminées
-    console.log("La quantité totale est de " + totalQuantity() + " canapé(s)");
+    console.log("La quantité totale est de " + getTotalQuantity(contentLS) + " canapé(s)");
     changeQuantity();
     deleteItem();
-    totalQuantity();
-    console.log(totalPrice());
+    console.log("Le prix total est de : " + getTotalPrice());
 });
 
-/**
- * Sert à mettre à jour le LS
- * @param {*} key Clé 
- * @param {*} tab Tableau à stocker dans le LS
- */
- function saveBasket(key, tab) {
+function saveBasket(key, tab) {
     localStorage.setItem(key, JSON.stringify(tab))
 };
+
+function getIndexProduct(item, LS) {
+    let contentLS = LS;
+    let itemID = item.closest("article").dataset.id; // get dataset.id of the closest <article>
+    let itemColor = item.closest("article").dataset.color; // idem for color
+    let element = contentLS.find(product => product.id == itemID && product.color == itemColor);
+    let productIdx = contentLS.indexOf(element) // Get l'index du produit en question
+    return productIdx;
+}
 
 function changeQuantity() {
     let allQtyInputs = document.querySelectorAll(".itemQuantity");
     allQtyInputs.forEach(itemInput => { // pour chaque input parmi allQtyInputs
         itemInput.addEventListener("change", () => {
-        let arrayLS = getLocalStorage();
-        let itemQty = itemInput.value;
-        let itemID = itemInput.closest("article").dataset.id; // get dataset.id of the closest <article>
-        let itemColor = itemInput.closest("article").dataset.color; // idem for color
-        let element = arrayLS.find(product => product.id == itemID && product.color == itemColor); 
-        let indexItem = arrayLS.indexOf(element)
-        arrayLS[indexItem].qty = itemQty;
-        saveBasket("product_list", arrayLS);
+            let itemQty = itemInput.value;
+            contentLS[getIndexProduct(itemInput, contentLS)].qty = itemQty;
+            saveBasket("product_list", contentLS);
         })
     })
 }
 
 function deleteItem() {
     let deleteButtons = document.querySelectorAll(".deleteItem");
-    deleteButtons.forEach(button => { // pour chaque bouton parmi deleteButtons
+    deleteButtons.forEach(button => {
         button.addEventListener("click", () => {
-        let itemID = button.closest("article").dataset.id; 
-        let itemColor = button.closest("article").dataset.color;
-        button.closest("article").remove(); // delete the closest <article> (dom only)
-        // Suppression au niveau du local storage
-        let arrayLS = getLocalStorage();
-        let element = arrayLS.find(product => product.id == itemID && product.color == itemColor); 
-        let productIdx = arrayLS.indexOf(element) // Get l'index du produit en question
-        arrayLS.splice(productIdx, 1); // Select one element from productIdx & delete it (donc lui-même)
-        saveBasket("product_list", arrayLS)  
+            let itemID = button.closest("article").dataset.id; 
+            let itemColor = button.closest("article").dataset.color;
+            let element = contentLS.find(product => product.id == itemID && product.color == itemColor); 
+            let productIdx = contentLS.indexOf(element) 
+            button.closest("article").remove(); // delete the closest <article> (dom only)
+            contentLS.splice(getIndexProduct(button, contentLS), 1); // Select one element from productIdx & delete it himself (localStorage)
+            saveBasket("product_list", contentLS)  
         })
     })
 }
 
-function totalPrice() {
-    return itemPrice = document.querySelector(".cart__item__content__description >:nth-child(3)").textContent.replace("€","")
+function getTotalPrice() {
+    let arr = Array.prototype.slice.call(document.querySelectorAll(".cart__item__content__description >:nth-child(3)"))
+    // Passe le résultat de querySelectorAll de nodelist à un array  
+    let arrPrices = []
+    for (let itemPrice of arr) {
+        let itemQty = contentLS[getIndexProduct(itemPrice, contentLS)].qty;
+        arrPrices.push((parseInt(itemPrice.textContent.replace("€","")))*itemQty);
+        // Push in arrPrices le text.content de chaque prix en remplaçant € par rien, en mutipliant par la quantité du produit tout en convertissant le tout en type number
+    }
+    return arrPrices.reduce((acc, x) => acc + x)
 }
 
-
-function totalQuantity() {
-    let arrayLS = getLocalStorage();
-    return arrayLS.map(item => parseInt(item.qty)).reduce((acc, i) => acc + i);
+function getTotalQuantity(locStorage) {
+    return locStorage.map(item => parseInt(item.qty)).reduce((acc, i) => acc + i);
 }
 
 
