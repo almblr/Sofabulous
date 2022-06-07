@@ -1,7 +1,11 @@
 let sectionItem = document.querySelector("#cart__items");
 let contentLS = JSON.parse(localStorage.getItem(`product_list`));
+// get le contenu du localStorage sous forme d'objet avec le json.parse
 
-// fillCart sert à remplir la page panier avec les produits ajoutés au LS
+/**
+ * 
+ * @returns Un tableau de promesses (autant de promesses que de produit avec la boucle for of)qui contient tous mes affichages de produit en HTML
+ */
 function fillCart() {
     let promises = [];
     for (let product of contentLS) {
@@ -47,65 +51,69 @@ function fillCart() {
 
 const promises = fillCart();
 Promise.all(promises).then(() => { // Return .then si ttes les promesses sont réussies/terminées
-    console.log("La quantité totale est de " + getTotalQuantity(contentLS) + " canapé(s)");
     changeQuantity();
     deleteItem();
-    console.log("Le prix total est de : " + getTotalPrice());
+    getTotalQuantity()
+    console.log("Le prix total est de : " + getTotalPrice() +"€");
 });
 
+// Permet de mettre à jour le contenu du LS (le panier)
 function saveBasket(key, tab) {
     localStorage.setItem(key, JSON.stringify(tab))
 };
 
-function getIndexProduct(item, LS) {
-    let contentLS = LS;
+// Permet de retourner l'index du produit
+function getProductIndex(item) {
     let itemID = item.closest("article").dataset.id; // get dataset.id of the closest <article>
     let itemColor = item.closest("article").dataset.color; // idem for color
-    let element = contentLS.find(product => product.id == itemID && product.color == itemColor);
-    let productIdx = contentLS.indexOf(element) // Get l'index du produit en question
+    let productIdx = contentLS.findIndex(product => product.id == itemID && product.color == itemColor); // Compare les ID et les couleurs des produits et sélectionne ceux qui correspondent pour avoir produit DOM = produit LS. indexOf permet 
     return productIdx;
 }
 
+// Changer la quantité d'un article
 function changeQuantity() {
     let allQtyInputs = document.querySelectorAll(".itemQuantity");
     allQtyInputs.forEach(itemInput => { // pour chaque input parmi allQtyInputs
         itemInput.addEventListener("change", () => {
             let itemQty = itemInput.value;
-            contentLS[getIndexProduct(itemInput, contentLS)].qty = itemQty;
+            contentLS[getProductIndex(itemInput)].qty = itemQty; // La qty du LS prend la valeur de l'input
             saveBasket("product_list", contentLS);
         })
     })
 }
 
+// Supprimer un article du DOM et du LS
 function deleteItem() {
     let deleteButtons = document.querySelectorAll(".deleteItem");
     deleteButtons.forEach(button => {
         button.addEventListener("click", () => {
-            let itemID = button.closest("article").dataset.id; 
-            let itemColor = button.closest("article").dataset.color;
-            let element = contentLS.find(product => product.id == itemID && product.color == itemColor); 
-            let productIdx = contentLS.indexOf(element) 
-            button.closest("article").remove(); // delete the closest <article> (dom only)
-            contentLS.splice(getIndexProduct(button, contentLS), 1); // Select one element from productIdx & delete it himself (localStorage)
+            button.closest("article").remove(); // DOM - delete the closest <article> 
+            contentLS.splice(getProductIndex(button), 1); // LS - Select one element from productIdx & delete it (donc lui-même) 
             saveBasket("product_list", contentLS)  
         })
     })
 }
 
+// Calcul du prix total en fonction du prix de chaque item par rapport à sa qty
 function getTotalPrice() {
     let arr = Array.prototype.slice.call(document.querySelectorAll(".cart__item__content__description >:nth-child(3)"))
     // Passe le résultat de querySelectorAll de nodelist à un array  
-    let arrPrices = []
+    let arrPrices = [] // On initialiser un tableau vide pour stocker les prix
     for (let itemPrice of arr) {
-        let itemQty = contentLS[getIndexProduct(itemPrice, contentLS)].qty;
+        let itemQty = contentLS[getProductIndex(itemPrice)].qty; // On récupère la quantité de l'article
         arrPrices.push((parseInt(itemPrice.textContent.replace("€","")))*itemQty);
-        // Push in arrPrices le text.content de chaque prix en remplaçant € par rien, en mutipliant par la quantité du produit tout en convertissant le tout en type number
+        // Push in arrPrices le text.content de chaque prix (en remplaçant € par rien) en mutipliant par la quantité du produit tout en convertissant le tout en type number
     }
-    return arrPrices.reduce((acc, x) => acc + x)
+    return arrPrices.reduce((acc, x) => acc + x) // Calcul du prix total
 }
 
-function getTotalQuantity(locStorage) {
-    return locStorage.map(item => parseInt(item.qty)).reduce((acc, i) => acc + i);
+function getTotalQuantity() {
+    if (contentLS.length == 0) {
+        console.log("Votre panier est vide");
+    } else {
+        let totalQty = contentLS.map(item => parseInt(item.qty)).reduce((acc, i) => acc + i);
+        console.log("La quantité totale est de " + totalQty + " canapé(s)");
+    }
 }
 
 
