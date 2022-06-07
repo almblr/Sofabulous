@@ -37,7 +37,7 @@ function fillCart() {
                             <p class="deleteItem">Supprimer</p>
                         </div>
                     </div>
-                </div>`
+                </div>` // onKeyDown return false permet de ne pas changer la qty au clavier
             sectionItem.appendChild(article);
             resolve();
         });
@@ -106,7 +106,7 @@ function getTotalPrice() {
         for (let itemPrice of arr) {
             let itemQty = contentLS[getProductIndex(itemPrice)].qty; // On récupère la quantité de l'article
             arrPrices.push((parseInt(itemPrice.textContent)*itemQty));
-            // Push in arrPrices le text.content de chaque prix en mutipliant par la quantité du produit tout en convertissant le tout en type number
+            // Push in arrPrices le text.content de chaque prix en mutipliant par la quantité du produit tout en convertissant le tout en type number donc ça exclut le €
         }
         document.getElementById("totalPrice").innerText = arrPrices.reduce((acc, x) => acc + x) // Calcul du prix total
     } else {
@@ -122,6 +122,7 @@ function getTotalQuantity() {
         document.getElementById("totalQuantity").innerText = contentLS.map(item => parseInt(item.qty)).reduce((acc, i) => acc + i);
     }
 }
+
 
 
 // getElementByClassName est une interface de collection d'élements qui ressemble à un tableau mais n'est pas pas vraiment un. Du coup faut d'abord transformer le contenu en tableau avec [...elements].forEach ou Array.from(elements).forEach()
