@@ -31,7 +31,7 @@ function fillCart() {
                     <div class="cart__item__content__settings">
                         <div class="cart__item__content__settings__quantity">
                             <p>Qté : </p>
-                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.qty}" onKeyDown="return false">
+                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.qty}">
                         </div>
                         <div class="cart__item__content__settings__delete">
                             <p class="deleteItem">Supprimer</p>
@@ -70,20 +70,6 @@ function getProductIndex(item) {
     return productIdx;
 }
 
-// Changer la quantité d'un article
-function changeQuantity() {
-    let allQtyInputs = document.querySelectorAll(".itemQuantity");
-    allQtyInputs.forEach(itemInput => { // pour chaque input parmi allQtyInputs
-        itemInput.addEventListener("change", () => {
-            let itemQty = itemInput.value;
-            contentLS[getProductIndex(itemInput)].qty = itemQty; // La qty du LS prend la valeur de l'input
-            saveBasket("product_list", contentLS);
-            getTotalPrice();
-            getTotalQuantity();
-        })
-    })
-}
-
 // Supprimer un article du DOM et du LS
 function deleteItem() {
     let deleteButtons = document.querySelectorAll(".deleteItem");
@@ -97,22 +83,53 @@ function deleteItem() {
     })
 }
 
+// Changer la quantité d'un article
+function changeQuantity() {
+    let allQtyInputs = document.querySelectorAll(".itemQuantity");
+    allQtyInputs.forEach(itemInput => { // pour chaque input parmi allQtyInputs
+        itemInput.addEventListener("change", () => {
+            let itemQty = parseInt(itemInput.value);
+            if (itemInput.value < 1) {
+                itemInput.closest("article").remove();
+                contentLS.splice(getProductIndex(itemInput), 1);
+                saveBasket("product_list", contentLS);
+                getTotalQuantity();
+                getTotalPrice();
+            }
+            if (itemInput.value >= 1 && itemInput.value <= 100) {
+                contentLS[getProductIndex(itemInput)].qty = itemQty; // La qty du LS prend la valeur de l'input
+                saveBasket("product_list", contentLS);
+                getTotalPrice();
+                getTotalQuantity();
+            }
+            if (itemInput.value > 100) {
+                alert("La valeur maximale est de 100 canapés.");
+                itemInput.value = 100;
+                itemQty = 100;
+                contentLS[getProductIndex(itemInput)].qty = itemQty;
+                saveBasket("product_list", contentLS);
+                getTotalQuantity();
+                getTotalPrice();
+            }
+        })
+    })
+}
+
 // Calcul du prix total en fonction du prix de chaque item par rapport à sa qty
 function getTotalPrice() {
     if (contentLS.length != 0) {
         let arr = document.querySelectorAll(".cart__item__content__description >:nth-child(3)");
-        // Passe le résultat de querySelectorAll de nodelist à un array  
-        let arrPrices = [] // On initialiser un tableau vide pour stocker les prix
+        let arrPrices = [] // On initialise un tableau vide pour stocker les prix
         for (let itemPrice of arr) {
             let itemQty = contentLS[getProductIndex(itemPrice)].qty; // On récupère la quantité de l'article
-            arrPrices.push((parseInt(itemPrice.textContent)*itemQty));
+            arrPrices.push(((Number(itemPrice.textContent.replace("€","")))*itemQty));
             // Push in arrPrices le text.content de chaque prix en mutipliant par la quantité du produit tout en convertissant le tout en type number donc ça exclut le €
         }
         document.getElementById("totalPrice").innerText = arrPrices.reduce((acc, x) => acc + x) // Calcul du prix total
     } else {
         getTotalQuantity()  
     }      
-}
+} // utiliser le constructor number / utiliser une regex pour virer le € en captant que les nombres ou splice ou pop etc... mais pas parseInt
 
 function getTotalQuantity() {
     if (contentLS.length == 0) {
@@ -126,5 +143,3 @@ function getTotalQuantity() {
 
 
 // getElementByClassName est une interface de collection d'élements qui ressemble à un tableau mais n'est pas pas vraiment un. Du coup faut d'abord transformer le contenu en tableau avec [...elements].forEach ou Array.from(elements).forEach()
-
-//parseInt exclut tout ce qui n'est pas un chiffre genre c'est le Zemmour des lettres XD du coup pas besoin de replace("€", "") pour virer le signe € dans le prix
