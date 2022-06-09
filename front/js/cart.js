@@ -141,58 +141,78 @@ function getTotalQuantity() {
     }
 }
 
-
-const firstnameInput = document.getElementById("firstName");
-const lastnameInput = document.getElementById("lastName");
-const adressInput = document.getElementById("adress");
-const cityInput = document.getElementById("city");
-const emailInput = document.getElementById("email");
-
 const arrRegex =  [
     {
-        name: document.getElementById("firstName"),
+        inputName:"firstName",
+        frenchName:"prénom",
         value:"^[A-Za-zÀ-ü-']+$",
         error: "Merci d'insérer un prénom correct"
     },
     {
-        name: document.getElementById("lastName"),
+        inputName:"lastName",
+        frenchName:"nom",
         value:"^[A-Za-zÀ-ü-']+$",
-        error: "Merci d'insérer un nom correct"
+        error:"Merci d'insérer un nom correct"
     },
     {
-        name: document.getElementById("address"),
+        inputName: "address",
+        frenchName:"adresse postale",
         value:"^[0-9]+\\s[A-Za-zÀ-ü-'\\s]+",
         error: "Merci d'insérer une adresse correcte."
     },
     {
-        name: document.getElementById("city"),
+        inputName:"city",
+        frenchName:"ville",
         value:"^[A-Za-zÀ-ü-']+$",
         error: "Merci d'insérer une ville correcte."
     },
     {
-        name: document.getElementById("email"),
+        inputName: "email",
+        frenchName:"email",
         value: "^[\\w-.]+@([\\w-]+.)+[\\w-]{2,4}$",
         error: 'Votre email doit être sous la forme "exemple@gmal.com"'
     }
 ]
 
-function validate() {
-    let allInputs = (document.querySelectorAll("form input[name]"));
-    for (let input of allInputs) {
-        input.addEventListener("change", () => { 
-            for (let i of arrRegex) {
-                let regex = new RegExp(i.value);
-                let name = i.name.value;
-                let test = regex.test(name)
+// function validate() {
+//         let allInputs = (document.querySelectorAll("form input[name]"));
+//         for (let input of allInputs) { /// Pour chaque input
+//         input.addEventListener("change", () => { /// J'écoute l'input 
+//             for (let i of arrRegex) { // Pour chaque i dans arrRegex
+//                 let regex = new RegExp(i.value);
+//                 let name = i.name.value;
+//                 let test = regex.test(name)
+//                 if (test) {
+//                     console.log("gg");
+//                 } else {
+//                     console.log("pa ouf");
+//                 }
+//             }
+//         })
+//     }
+// }
+
+function validateInput() {
+        for (let i of arrRegex) {
+        let input = document.getElementById(i.inputName)
+        let regex = new RegExp(i.value)
+        let regexState;
+        input.addEventListener("change", () => {
+            let test = regex.test(input.value);
+            let errorMsg = input.nextElementSibling; // focus l'élément d'après donc le <p>
                 if (test) {
-                    console.log("c bien !");
+                    console.log(`Votre ${i.frenchName} est correct`);
+                    regexState = "OK";
+                    if (errorMsg) {
+                        errorMsg.innerText = "";
+                    }
                 } else {
-                    console.log("pas correct");
+                    errorMsg.innerText = `Votre ${i.frenchName} est incorrect(e)`
+                    regexState = "NOT OK";
                 }
-            }
-        })
-    }
+                console.log(regexState);
+            })
+        
+        }
 }
-
-
-validate();
+validateInput();
