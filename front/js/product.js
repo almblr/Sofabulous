@@ -76,7 +76,4 @@ fetch(monApi)
                 addToLocalStorage(tabProduct, data, ProductInfo(data));
             } 
         })
-    });     
-
-
-    // enlever le deuxième if en rajoutant un return dans le premier
+    });

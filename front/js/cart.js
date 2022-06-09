@@ -37,7 +37,7 @@ function fillCart() {
                             <p class="deleteItem">Supprimer</p>
                         </div>
                     </div>
-                </div>` // onKeyDown return false permet de ne pas changer la qty au clavier
+                </div>` // onvalueDown return false permet de ne pas changer la qty au clavier
             sectionItem.appendChild(article);
             resolve();
         });
@@ -58,8 +58,8 @@ Promise.all(promises).then(() => { // Return .then si ttes les promesses sont r�
 });
 
 // Permet de mettre à jour le contenu du LS (le panier)
-function saveBasket(key, tab) {
-    localStorage.setItem(key, JSON.stringify(tab))
+function saveBasket(value, tab) {
+    localStorage.setItem(value, JSON.stringify(tab))
 };
 
 // Permet de retourner l'index du produit
@@ -129,10 +129,11 @@ function getTotalPrice() {
     } else {
         getTotalQuantity()  
     }      
-} // utiliser le constructor number / utiliser une regex pour virer le € en captant que les nombres ou splice ou pop etc... mais pas parseInt
+}
 
-function getTotalQuantity() {
-    if (contentLS.length == 0) {
+// Calcule la quantité totale. 
+function getTotalQuantity() { 
+    if (contentLS.length == 0) { // S'il n'y a pas de calcul à faire car panier vide
         document.getElementById("totalQuantity").innerText = "0";
         document.getElementById("totalPrice").innerText = "0";
     } else {
@@ -141,5 +142,57 @@ function getTotalQuantity() {
 }
 
 
+const firstnameInput = document.getElementById("firstName");
+const lastnameInput = document.getElementById("lastName");
+const adressInput = document.getElementById("adress");
+const cityInput = document.getElementById("city");
+const emailInput = document.getElementById("email");
 
-// getElementByClassName est une interface de collection d'élements qui ressemble à un tableau mais n'est pas pas vraiment un. Du coup faut d'abord transformer le contenu en tableau avec [...elements].forEach ou Array.from(elements).forEach()
+const arrRegex =  [
+    {
+        name: document.getElementById("firstName"),
+        value:"^[A-Za-zÀ-ü-']+$",
+        error: "Merci d'insérer un prénom correct"
+    },
+    {
+        name: document.getElementById("lastName"),
+        value:"^[A-Za-zÀ-ü-']+$",
+        error: "Merci d'insérer un nom correct"
+    },
+    {
+        name: document.getElementById("address"),
+        value:"^[0-9]+\\s[A-Za-zÀ-ü-'\\s]+",
+        error: "Merci d'insérer une adresse correcte."
+    },
+    {
+        name: document.getElementById("city"),
+        value:"^[A-Za-zÀ-ü-']+$",
+        error: "Merci d'insérer une ville correcte."
+    },
+    {
+        name: document.getElementById("email"),
+        value: "^[\\w-.]+@([\\w-]+.)+[\\w-]{2,4}$",
+        error: 'Votre email doit être sous la forme "exemple@gmal.com"'
+    }
+]
+
+function validate() {
+    let allInputs = (document.querySelectorAll("form input[name]"));
+    for (let input of allInputs) {
+        input.addEventListener("change", () => { 
+            for (let i of arrRegex) {
+                let regex = new RegExp(i.value);
+                let name = i.name.value;
+                let test = regex.test(name)
+                if (test) {
+                    console.log("c bien !");
+                } else {
+                    console.log("pas correct");
+                }
+            }
+        })
+    }
+}
+
+
+validate();
