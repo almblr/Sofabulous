@@ -141,78 +141,91 @@ function getTotalQuantity() {
     }
 }
 
-const arrRegex =  [
-    {
-        inputName:"firstName",
-        frenchName:"prénom",
-        value:"^[A-Za-zÀ-ü-']+$",
-        error: "Merci d'insérer un prénom correct"
+const inputValidations = {
+    firstName : {
+        regex:"^[A-Za-zÀ-ü-']+$",
+        frenchName:"prénom"
     },
-    {
-        inputName:"lastName",
-        frenchName:"nom",
-        value:"^[A-Za-zÀ-ü-']+$",
-        error:"Merci d'insérer un nom correct"
+    lastName : {
+        regex:"^[A-Za-zÀ-ü-']+$",
+        frenchName:"nom"
     },
-    {
-        inputName: "address",
-        frenchName:"adresse postale",
-        value:"^[0-9]+\\s[A-Za-zÀ-ü-'\\s]+",
-        error: "Merci d'insérer une adresse correcte."
+    address : {
+        regex:"^[0-9]+\\s[A-Za-zÀ-ü-'\\s]+",
+        frenchName:"adresse"
     },
-    {
-        inputName:"city",
-        frenchName:"ville",
-        value:"^[A-Za-zÀ-ü-']+$",
-        error: "Merci d'insérer une ville correcte."
+    city : {
+        regex:"^[A-Za-zÀ-ü-']+$",
+        frenchName:"ville"
     },
-    {
-        inputName: "email",
-        frenchName:"email",
-        value: "^[\\w-.]+@([\\w-]+.)+[\\w-]{2,4}$",
-        error: 'Votre email doit être sous la forme "exemple@gmal.com"'
+    email : {
+        regex:"^[\\w-.]+@([\\w-]+.)+[\\w-]{2,4}$",
+        frenchName:"email"
     }
-]
+}
 
-// function validate() {
-//         let allInputs = (document.querySelectorAll("form input[name]"));
-//         for (let input of allInputs) { /// Pour chaque input
-//         input.addEventListener("change", () => { /// J'écoute l'input 
-//             for (let i of arrRegex) { // Pour chaque i dans arrRegex
-//                 let regex = new RegExp(i.value);
-//                 let name = i.name.value;
-//                 let test = regex.test(name)
-//                 if (test) {
-//                     console.log("gg");
-//                 } else {
-//                     console.log("pa ouf");
-//                 }
-//             }
-//         })
-//     }
+const submitButton = document.getElementById("order");
+
+// function testInput(nameInput) {
+//     let input = document.getElementById(nameInput);
+//     let regex = new RegExp(inputValidations[nameInput].regex)
+//     let validation = false;
+//     input.addEventListener("change", () => {
+//         let test = regex.test(input.value);
+//         let errorMsg = input.nextElementSibling; // focus l'élément d'après donc le <p>
+//         if (test) {
+//             // console.log(`Votre ${inputValidations[nameInput].frenchName} est correct`);
+//             validation = true;
+//             // if (errorMsg) {
+//             //     errorMsg.innerText = "";
+//             // }
+//         } else {
+//             // errorMsg.innerText = `Votre ${inputValidations[nameInput].frenchName} est incorrect(e)`
+//             validation = false;
+//         }
+//     })
 // }
 
-function validateInput() {
-        for (let i of arrRegex) {
-        let input = document.getElementById(i.inputName)
-        let regex = new RegExp(i.value)
-        let regexState;
+
+// testInput("firstName");
+
+function inputValidation() {
+    let inputs = document.querySelectorAll("form input[name]");
+    inputs.forEach(input => {
         input.addEventListener("change", () => {
-            let test = regex.test(input.value);
-            let errorMsg = input.nextElementSibling; // focus l'élément d'après donc le <p>
-                if (test) {
-                    console.log(`Votre ${i.frenchName} est correct`);
-                    regexState = "OK";
-                    if (errorMsg) {
-                        errorMsg.innerText = "";
+            for (let obj in inputValidations) {
+                if (input.name === obj) {
+                    let regex = new RegExp(inputValidations[obj].regex)
+                    let test = regex.test(input.value);
+                    // console.log(test);
+                    if (test) {
+                        console.log("c cool");
+                    } else {
+                        console.log("c pa cool");
                     }
-                } else {
-                    errorMsg.innerText = `Votre ${i.frenchName} est incorrect(e)`
-                    regexState = "NOT OK";
                 }
-                console.log(regexState);
-            })
-        
-        }
+            }
+        })
+    })
 }
-validateInput();
+
+inputValidation()
+
+
+// function testForm() {
+//     e.preventDefault();
+//     if() {
+
+//     }
+
+
+
+// testInput("lastName");
+// testInput("address");
+// testInput("city");
+// testInput("email");
+// testForm();
+// const buttonForm = document.getElementById("order");
+
+
+
