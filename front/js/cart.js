@@ -141,67 +141,50 @@ function getTotalQuantity() {
     }
 }
 
-const inputValidations = {
-    firstName : {
-        regex:"^[A-Za-zÀ-ü-']+$",
-        frenchName:"prénom"
+const inputValidationsRules = [
+    {
+        id: "firstName",
+        regex: /^[A-Za-zÀ-ü-']+$/,
+        frenchName: "prénom",
     },
-    lastName : {
+    {
+        id: "lastName",
         regex:"^[A-Za-zÀ-ü-']+$",
         frenchName:"nom"
     },
-    address : {
+    {
+        id: "address",
         regex:"^[0-9]+\\s[A-Za-zÀ-ü-'\\s]+",
         frenchName:"adresse"
     },
-    city : {
+    {
+        id: "city",
         regex:"^[A-Za-zÀ-ü-']+$",
         frenchName:"ville"
     },
-    email : {
+    {
+        id: "email",
         regex:"^[\\w-.]+@([\\w-]+.)+[\\w-]{2,4}$",
         frenchName:"email"
     }
-}
+]
 
 const submitButton = document.getElementById("order");
 
-// function testInput(nameInput) {
-//     let input = document.getElementById(nameInput);
-//     let regex = new RegExp(inputValidations[nameInput].regex)
-//     let validation = false;
-//     input.addEventListener("change", () => {
-//         let test = regex.test(input.value);
-//         let errorMsg = input.nextElementSibling; // focus l'élément d'après donc le <p>
-//         if (test) {
-//             // console.log(`Votre ${inputValidations[nameInput].frenchName} est correct`);
-//             validation = true;
-//             // if (errorMsg) {
-//             //     errorMsg.innerText = "";
-//             // }
-//         } else {
-//             // errorMsg.innerText = `Votre ${inputValidations[nameInput].frenchName} est incorrect(e)`
-//             validation = false;
-//         }
-//     })
-// }
 
-
-// testInput("firstName");
-
-function inputValidation() {
+// Cette fonction initialise une addListener pour les erreurs des inputs
+function initValidation() {
     let inputs = document.querySelectorAll("form input[name]");
     inputs.forEach(input => {
         input.addEventListener("change", () => {
-            for (let obj in inputValidations) {
-                if (input.name === obj) {
-                    let regex = new RegExp(inputValidations[obj].regex)
+            for (let i of inputValidationsRules) {
+                if (input.name === i.id) {
+                    let regex = new RegExp(i.regex)
                     let test = regex.test(input.value);
-                    // console.log(test);
                     if (test) {
-                        console.log("c cool");
+                        console.log(`Votre ${i.frenchName} est correct(e)`);
                     } else {
-                        console.log("c pa cool");
+                        console.log(`Votre ${i.frenchName} est incorrect(e)`);
                     }
                 }
             }
@@ -209,23 +192,33 @@ function inputValidation() {
     })
 }
 
-inputValidation()
+// Permet de vérifier que le formulaire est bon 
+function inputValidation(e) {
+    e.preventDefault();
+    let inputs = Array.from(document.querySelectorAll("form input[name]"));
+    console.log(inputs);
+    return inputs.every(input => { // every vérifie que tous les éléments d'un tableau répondent à une condition
+        for (let i of inputValidationsRules) {
+            if (input.name === i.id) {
+                if (input.value === "") {
+                    let regex = new RegExp(i.regex)
+                    let test = regex.test(input.value);
+                    console.log(test);
+                    return test;
+                }
+                let regex = new RegExp(i.regex)
+                let test = regex.test(input.value);
+                console.log(test);
+                return test;
+            }
+        }
+        // return false;
+    })
+}
 
+initValidation();
+submitButton.addEventListener("click", inputValidation); 
 
-// function testForm() {
-//     e.preventDefault();
-//     if() {
-
-//     }
-
-
-
-// testInput("lastName");
-// testInput("address");
-// testInput("city");
-// testInput("email");
-// testForm();
-// const buttonForm = document.getElementById("order");
 
 
 
