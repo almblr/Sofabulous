@@ -1,6 +1,8 @@
 let sectionItem = document.querySelector("#cart__items");
 const submitButton = document.getElementById("order");
 let contentLS = JSON.parse(localStorage.getItem(`product_list`));
+let arrayUsers = JSON.parse(localStorage.getItem(`users_list`));
+
 // get le contenu du localStorage sous forme d'objet avec le json.parse
 
 /**
@@ -8,43 +10,47 @@ let contentLS = JSON.parse(localStorage.getItem(`product_list`));
  * @returns Un tableau de promesses (autant de promesses que de produit avec la boucle for of)qui contient tous mes affichages de produit en HTML
  */
 function fillCart() {
-    let promises = [];
-    for (let product of contentLS) {
-        const promise = new Promise(async (resolve) => { // Y a autant de promesses que de produits
-            let monApi = `http://localhost:3000/api/products/${product.id}`; // Car je veux les infos de chaque produit
-            const response = await fetch(monApi) // Pour récupérer les autres infos des produits
-            const data = await response.json() // Ici mon data est un objet et non un tableau !
-            /// Création de la balise article ///
-            const article = document.createElement("article");
-            article.classList.add("cart__item");
-            article.setAttribute("data-id", product.id)
-            article.setAttribute("data-color", product.color)
-            article.innerHTML = /*HTML */ `
-                <div class="cart__item__img">
-                <img src="${data.imageUrl}" alt="${data.altTxt}">
-                </div>
-                <div class="cart__item__content">
-                    <div class="cart__item__content__description">
-                        <h2>${data.name}</h2>
-                        <p>${product.color}</p>
-                        <p>${data.price}€</p>
+    if (contentLS === null) {
+        console.log("Y A R");
+    } else {
+        let promises = [];
+        for (let product of contentLS) {
+            const promise = new Promise(async (resolve) => { // Y a autant de promesses que de produits
+                let monApi = `http://localhost:3000/api/products/${product.id}`; // Car je veux les infos de chaque produit
+                const response = await fetch(monApi) // Pour récupérer les autres infos des produits
+                const data = await response.json() // Ici mon data est un objet et non un tableau !
+                /// Création de la balise article ///
+                const article = document.createElement("article");
+                article.classList.add("cart__item");
+                article.setAttribute("data-id", product.id)
+                article.setAttribute("data-color", product.color)
+                article.innerHTML = /*HTML */ `
+                    <div class="cart__item__img">
+                    <img src="${data.imageUrl}" alt="${data.altTxt}">
                     </div>
-                    <div class="cart__item__content__settings">
-                        <div class="cart__item__content__settings__quantity">
-                            <p>Qté : </p>
-                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.qty}">
+                    <div class="cart__item__content">
+                        <div class="cart__item__content__description">
+                            <h2>${data.name}</h2>
+                            <p>${product.color}</p>
+                            <p>${data.price}€</p>
                         </div>
-                        <div class="cart__item__content__settings__delete">
-                            <p class="deleteItem">Supprimer</p>
+                        <div class="cart__item__content__settings">
+                            <div class="cart__item__content__settings__quantity">
+                                <p>Qté : </p>
+                                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.qty}">
+                            </div>
+                            <div class="cart__item__content__settings__delete">
+                                <p class="deleteItem">Supprimer</p>
+                            </div>
                         </div>
-                    </div>
-                </div>`
-            sectionItem.appendChild(article);
-            resolve();
-        });
-        promises.push(promise)
+                    </div>`
+                sectionItem.appendChild(article);
+                resolve();
+            });
+            promises.push(promise)
+        }
+        return promises;
     }
-    return promises;
 }
 /////////////////////////////////////
 /////////////////////////////////////
@@ -145,23 +151,23 @@ function getTotalQuantity() {
 const inputValidations = {
     firstName : {
         regex:"^[A-Za-zÀ-ü-' ]+$",
-        frenchName:"prénom"
+        frenchName:"Prénom"
     },
     lastName : {
         regex:"^[A-Za-zÀ-ü-' ]+$",
-        frenchName:"nom"
+        frenchName:"Nom"
     },
     address : {
         regex:"^[0-9]+\\s[A-Za-zÀ-ü-'\\s]+",
-        frenchName:"adresse"
+        frenchName:"Adresse"
     },
     city : {
         regex:"^[A-Za-zÀ-ü-' ]+$",
-        frenchName:"ville"
+        frenchName:"Ville"
     },
     email : {
         regex:".+\@.+\..+",
-        frenchName:"email"
+        frenchName:"Email"
     }
 }
 
@@ -182,19 +188,19 @@ function initValidation() {
         input.addEventListener("change", () => {
             for (let key in inputValidations) {
                 if (input.name === key) {
-                        let test = testInput(key, inputValidations[key].regex)
-                        let errorMsg = input.nextElementSibling;
-                        if (test === true) {
-                            console.log(test);
-                            if (errorMsg) {
-                                errorMsg.remove();
-                            } else {
-                                console.log(test);
-                            }
+                    let test = testInput(key, inputValidations[key].regex)
+                    let errorMsg = input.nextElementSibling;
+                    if (test === true) {
+                        console.log(test);
+                        if (errorMsg) {
+                            errorMsg.remove();
                         } else {
                             console.log(test);
-                            errorMsg.innerText = `${inputValidations[key].frenchName} pabon`;
                         }
+                    } else {
+                        console.log(test);
+                        errorMsg.innerText = `${inputValidations[key].frenchName} incorrect(e)`;
+                    }
                 }
             }
         })
@@ -214,11 +220,27 @@ function valideForm () {
                 return; // Quitte la boucle, y a plus de test à faire vu que celui que je fais est false
             }
         } 
-        console.log("les calculs sont bons Kevin");
+        const user = {
+            firstname: document.getElementById("firstName").value,
+            lastname:document.getElementById("lastName").value,
+            address: document.getElementById("address").value,
+            city: document.getElementById("city").value,
+            email: document.getElementById("email").value
+        }
+        const produitsUser = contentLS;
+        if (localStorage.getItem("users_list")) {
+            let arrayUsers = JSON.parse(localStorage.getItem(`users_list`));
+            arrayUsers.push(user)
+            saveBasket("users_list", arrayUsers)
+        } else {
+            const arrayUsers = [];
+            arrayUsers.push(user)
+            saveBasket("users_list", arrayUsers)
+        }
     })
 }
-
 valideForm();
+
 
 // console.log(inputValidations); // Renvoie un object
 // console.log(Object.keys(inputValidations)); // Renvoie un Array qui contient les clés de mon objet inputValidations
