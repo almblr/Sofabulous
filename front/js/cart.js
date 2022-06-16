@@ -1,4 +1,5 @@
 let sectionItem = document.querySelector("#cart__items");
+const submitButton = document.getElementById("order");
 let contentLS = JSON.parse(localStorage.getItem(`product_list`));
 // get le contenu du localStorage sous forme d'objet avec le json.parse
 
@@ -37,7 +38,7 @@ function fillCart() {
                             <p class="deleteItem">Supprimer</p>
                         </div>
                     </div>
-                </div>` // onvalueDown return false permet de ne pas changer la qty au clavier
+                </div>`
             sectionItem.appendChild(article);
             resolve();
         });
@@ -141,84 +142,83 @@ function getTotalQuantity() {
     }
 }
 
-const inputValidationsRules = [
-    {
-        id: "firstName",
-        regex: /^[A-Za-zÀ-ü-']+$/,
-        frenchName: "prénom",
+const inputValidations = {
+    firstName : {
+        regex:"^[A-Za-zÀ-ü-' ]+$",
+        frenchName:"prénom"
     },
-    {
-        id: "lastName",
-        regex:"^[A-Za-zÀ-ü-']+$",
+    lastName : {
+        regex:"^[A-Za-zÀ-ü-' ]+$",
         frenchName:"nom"
     },
-    {
-        id: "address",
+    address : {
         regex:"^[0-9]+\\s[A-Za-zÀ-ü-'\\s]+",
         frenchName:"adresse"
     },
-    {
-        id: "city",
-        regex:"^[A-Za-zÀ-ü-']+$",
+    city : {
+        regex:"^[A-Za-zÀ-ü-' ]+$",
         frenchName:"ville"
     },
-    {
-        id: "email",
-        regex:"^[\\w-.]+@([\\w-]+.)+[\\w-]{2,4}$",
+    email : {
+        regex:".+\@.+\..+",
         frenchName:"email"
     }
-]
+}
 
-const submitButton = document.getElementById("order");
+function testInput(nameInput, regexInput) {
+    let input = document.getElementById(nameInput);
+    let regex = new RegExp(regexInput);
+    let test = regex.test(input.value);
+    if (test) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
-
-// Cette fonction initialise une addListener pour les erreurs des inputs
 function initValidation() {
     let inputs = document.querySelectorAll("form input[name]");
     inputs.forEach(input => {
         input.addEventListener("change", () => {
-            for (let i of inputValidationsRules) {
-                if (input.name === i.id) {
-                    let regex = new RegExp(i.regex)
-                    let test = regex.test(input.value);
-                    if (test) {
-                        console.log(`Votre ${i.frenchName} est correct(e)`);
-                    } else {
-                        console.log(`Votre ${i.frenchName} est incorrect(e)`);
-                    }
+            for (let key in inputValidations) {
+                if (input.name === key) {
+                        let test = testInput(key, inputValidations[key].regex)
+                        let errorMsg = input.nextElementSibling;
+                        if (test === true) {
+                            console.log(test);
+                            if (errorMsg) {
+                                errorMsg.remove();
+                            } else {
+                                console.log(test);
+                            }
+                        } else {
+                            console.log(test);
+                            errorMsg.innerText = `${inputValidations[key].frenchName} pabon`;
+                        }
                 }
             }
         })
     })
-}
+} 
+initValidation();
 
-// Permet de vérifier que le formulaire est bon 
-function inputValidation(e) {
-    e.preventDefault();
-    let inputs = Array.from(document.querySelectorAll("form input[name]"));
-    console.log(inputs);
-    return inputs.every(input => { // every vérifie que tous les éléments d'un tableau répondent à une condition
-        for (let i of inputValidationsRules) {
-            if (input.name === i.id) {
-                if (input.value === "") {
-                    let regex = new RegExp(i.regex)
-                    let test = regex.test(input.value);
-                    console.log(test);
-                    return test;
-                }
-                let regex = new RegExp(i.regex)
-                let test = regex.test(input.value);
-                console.log(test);
-                return test;
+// Pour checker si tous les champs respectent la regex. Si un champ n'est pas valide, il quitte la boucle. S'ils sont tous valides, log le "coucou"
+function valideForm () {
+    submitButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        for (let validationKey of Object.keys(inputValidations)) { // Object.keys rend inputValidations (qui est un objet) iterable car il renvoie un tableau de ses clés
+            const validationRule = inputValidations[validationKey];
+            if (testInput(validationKey, validationRule.regex)) { // Si le test est true
+                continue; // passe au test de l'input suivant
+            } else { // Si le test est false
+                return; // Quitte la boucle, y a plus de test à faire vu que celui que je fais est false
             }
-        }
-        // return false;
+        } 
+        console.log("les calculs sont bons Kevin");
     })
 }
 
-initValidation();
-submitButton.addEventListener("click", inputValidation); 
+valideForm();
 
-
-
-
+// console.log(inputValidations); // Renvoie un object
+// console.log(Object.keys(inputValidations)); // Renvoie un Array qui contient les clés de mon objet inputValidations
