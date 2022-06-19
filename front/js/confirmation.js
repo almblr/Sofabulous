@@ -1,4 +1,4 @@
-const str = window.location; // Return l'URL actuelle sous forme de string
-const url = new URL(str); // searchParams fonctionne avec une url
-const orderID = url.searchParams.get("id"); // Retourne l'id de la commande
+const str = window.location; 
+const url = new URL(str); 
+const orderID = url.searchParams.get("id");
 document.getElementById("orderId").innerText = orderID;
