@@ -1,8 +1,8 @@
 let monApi = "http://localhost:3000/api/products/"; // On déclare une variable pour stocker l'API
 const section = document.querySelector("#items");
 
-fetch(monApi)
-    .then((response) => response.json())
+fetch(monApi) // Fetch fait un appel sur l'API et retourne une promesse
+    .then((response) => response.json()) // .json pour rendre la réponse "exploitable" en JS
     .then((data) => {
         for (let item of data) {
             const newLink = document.createElement("a");
