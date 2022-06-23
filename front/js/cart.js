@@ -178,22 +178,23 @@ function testInput(nameInput, regexInput) {
     }
 };
 
+// Applique le test pour chaque input du formulaire et agit en conséquence du résultat
 function initValidation() {
     let inputs = document.querySelectorAll("form input[name]"); // Exclut le bouton grâce au [name]
     inputs.forEach(input => {
         input.addEventListener("change", () => {
-            for (let key in inputValidations) {
-                if (input.name === key) { // Si le nom de l'input correspond à la clé du tableau
-                    let test = testInput(key, inputValidations[key].regex)
+            for (let key in inputValidations) { // On boucle sur le tableau des regex
+                if (input.name === key) { // Si le nom de l'input en HTML correspond à la clé (key) du tableau
+                    let test = testInput(key, inputValidations[key].regex) // On fait le test 
                     let errorMsg = input.nextElementSibling;
-                    if (test === true) {
+                    if (test === true) { // Si le test est bon
                         console.log(test);
                         if (errorMsg) { // Supprime le message d'erreur s'il a déjà été affiché
                             errorMsg.innerText = "";
                         } else {
                             console.log(test);
                         }
-                    } else {
+                    } else { // S'il est mauvais, l'indique à l'utilisateur
                         console.log(test);
                         errorMsg.innerText = `${inputValidations[key].frenchName} incorrect(e)`;
                     }
@@ -218,14 +219,14 @@ function valideForm () {
                 return; // Quitte la boucle, y a plus de test à faire vu que celui que je fais est false
             }
         } 
-        const userInfo = {
+        const userInfo = { // Objet user à envoyer avec la méthode POST
             firstName: document.getElementById("firstName").value,
             lastName: document.getElementById("lastName").value,
             address: document.getElementById("address").value,
             city: document.getElementById("city").value,
             email: document.getElementById("email").value
         }
-        const productsID = contentLS.map(x => x.id); // Récupère l'ID de chaque produit et stock dans un arr
+        const productsID = contentLS.map(x => x.id); // Tableau d'id : récupère l'ID de chaque produit et le stock
         fetch("http://localhost:3000/api/products/order", {
             method: "POST",
             body: JSON.stringify(
