@@ -2,13 +2,15 @@ let sectionItem = document.querySelector("#cart__items");
 const submitButton = document.getElementById("order");
 let contentLS = JSON.parse(localStorage.getItem(`product_list`));
 
+
 function saveBasket(key, value) {
     localStorage.setItem(key, JSON.stringify(value))
 };
 
+
 // Retourne promises (un array de promesses) qui contient tous mes affichages de produits en HTML
 function fillCart() {
-    if (contentLS === null) { // Si localStorage est vide, ne fait rien
+    if (contentLS === null) { // Ne fait rien
     } else {
         let promises = [];
         for (let product of contentLS) {
@@ -54,7 +56,7 @@ function fillCart() {
 /////////////////////////////////////
 
 const allPromises = fillCart(); // Pour éviter d'écrire Promise.all(fillCart()).then car pas très visuel
-Promise.all(allPromises).then(() => { // Return .then si ttes les promesses sont réussies/terminées
+Promise.all(allPromises).then(() => { 
     changeQuantity();
     deleteItem();
     getTotalQuantity();
@@ -63,40 +65,38 @@ Promise.all(allPromises).then(() => { // Return .then si ttes les promesses sont
 
 // Permet de retourner l'index du produit
 function getProductIndex(item) {
-    let itemID = item.closest("article").dataset.id; // get dataset.id of the closest <article>
-    let itemColor = item.closest("article").dataset.color; // idem for color
-    let idxProduct = contentLS.findIndex(product => product.id == itemID && product.color == itemColor); // Compare les ID et les couleurs des produits et sélectionne ceux qui correspondent pour avoir produit DOM = produit LS.
+    let itemID = item.closest("article").dataset.id; 
+    let itemColor = item.closest("article").dataset.color; 
+    let idxProduct = contentLS.findIndex(product => product.id == itemID && product.color == itemColor);
     return idxProduct;
 }
 
 // Changer la quantité d'un article
 function changeQuantity() {
     let allQtyInputs = document.querySelectorAll(".itemQuantity");
-    allQtyInputs.forEach(itemInput => { // Pour chaque input parmi allQtyInputs
+    allQtyInputs.forEach(itemInput => {
         itemInput.addEventListener("change", () => {
             let itemQty = parseInt(itemInput.value);
-            if (itemInput.value < 1) {
-                itemInput.closest("article").remove(); // Suppression au niveau du DOM
-                contentLS.splice(getProductIndex(itemInput), 1); // Select one element from productIdx & delete it (donc lui-même)
-                saveBasket("product_list", contentLS);
-                getTotalQuantity();
-                getTotalPrice();
-            }
-            if (itemInput.value >= 1 && itemInput.value <= 100) {
-                contentLS[getProductIndex(itemInput)].qty = itemQty; // La qty du produit dans le LS prend la valeur de l'input
-                saveBasket("product_list", contentLS);
-                getTotalQuantity();
-                getTotalPrice();
-            }
             if (itemInput.value > 100) {
                 alert("La valeur maximale est de 100 canapés.");
                 itemInput.value = 100;
                 itemQty = 100;
                 contentLS[getProductIndex(itemInput)].qty = itemQty;
-                saveBasket("product_list", contentLS);
                 getTotalQuantity();
                 getTotalPrice();
             }
+            if (itemInput.value >= 1 && itemInput.value <= 100) {
+                contentLS[getProductIndex(itemInput)].qty = itemQty; // La qty du produit dans le LS prend la valeur de l'input
+                getTotalQuantity();
+                getTotalPrice();
+            }
+            if (itemInput.value < 1) {
+                itemInput.closest("article").remove(); // Suppression au niveau du DOM
+                contentLS.splice(getProductIndex(itemInput), 1); // Select one element from productIdx & delete it (donc lui-même)
+                getTotalQuantity();
+                getTotalPrice();
+            }
+            saveBasket("product_list", contentLS);
         })
     })
 };
@@ -117,7 +117,7 @@ function deleteItem() {
 
 // Calcule la quantité totale
 function getTotalQuantity() { 
-    if (contentLS.length == 0) { // S'il n'y a pas de calcul à faire car panier vide
+    if (contentLS.length == 0) {
         document.getElementById("totalQuantity").innerText = "0";
         document.getElementById("totalPrice").innerText = "0";
     } else {
@@ -129,11 +129,10 @@ function getTotalQuantity() {
 function getTotalPrice() {
     if (contentLS.length != 0) {
         let arr = document.querySelectorAll(".cart__item__content__description >:nth-child(3)");
-        let arrPrices = [] // On initialise un tableau vide pour stocker les prix
+        let arrPrices = []
         for (let itemPrice of arr) {
-            let itemQty = contentLS[getProductIndex(itemPrice)].qty; // On récupère la quantité de l'article
+            let itemQty = contentLS[getProductIndex(itemPrice)].qty;
             arrPrices.push(((Number(itemPrice.textContent.replace("€","")))*itemQty));
-            // Push in arrPrices le text.content de chaque prix en mutipliant par la quantité du produit tout en convertissant le tout en type number (le replace enlève le signe €)
         }
         document.getElementById("totalPrice").innerText = arrPrices.reduce((acc, x) => acc + x);
     } else {
@@ -145,7 +144,7 @@ function getTotalPrice() {
 
 const inputValidations = {
     firstName : {
-        regex:"^[A-Za-zÀ-ü-' ]+$",
+        regex:"^[A-Za-zÀ-ü-' ]+$", // mettre les / des regex
         frenchName:"Prénom"
     },
     lastName : {
@@ -183,18 +182,18 @@ function initValidation() {
     let inputs = document.querySelectorAll("form input[name]"); // Exclut le bouton grâce au [name]
     inputs.forEach(input => {
         input.addEventListener("change", () => {
-            for (let key in inputValidations) { // On boucle sur le tableau des regex
+            for (let key in inputValidations) { 
                 if (input.name === key) { // Si le nom de l'input en HTML correspond à la clé (key) du tableau
-                    let test = testInput(key, inputValidations[key].regex) // On fait le test 
+                    let test = testInput(key, inputValidations[key].regex)
                     let errorMsg = input.nextElementSibling;
-                    if (test === true) { // Si le test est bon
+                    if (test === true) { 
                         console.log(test);
-                        if (errorMsg) { // Supprime le message d'erreur s'il a déjà été affiché
+                        if (errorMsg) {
                             errorMsg.innerText = "";
                         } else {
                             console.log(test);
                         }
-                    } else { // S'il est mauvais, l'indique à l'utilisateur
+                    } else {
                         console.log(test);
                         errorMsg.innerText = `${inputValidations[key].frenchName} incorrect(e)`;
                     }
@@ -213,25 +212,23 @@ function valideForm () {
         for (let validationKey of Object.keys(inputValidations)) { // Object.keys rend inputValidations (qui est un objet) iterable car il renvoie un tableau de ses clés
             const validationRule = inputValidations[validationKey];
             console.log(validationRule);
-            if (testInput(validationKey, validationRule.regex)) { // Si le test est true
-                continue; // passe au test de l'input suivant
-            } else { // Si le test est false
-                return; // Quitte la boucle, y a plus de test à faire vu que celui que je fais est false
+            if (testInput(validationKey, validationRule.regex)) {
+                continue; // Passe au test de l'input suivant
+            } else {
+                return; // Quitte la boucle
             }
         } 
-        const userInfo = { // Objet user à envoyer avec la méthode POST
-            firstName: document.getElementById("firstName").value,
-            lastName: document.getElementById("lastName").value,
-            address: document.getElementById("address").value,
-            city: document.getElementById("city").value,
-            email: document.getElementById("email").value
-        }
-        const productsID = contentLS.map(x => x.id); // Tableau d'id : récupère l'ID de chaque produit et le stock
         fetch("http://localhost:3000/api/products/order", {
             method: "POST",
             body: JSON.stringify(
-                {contact:userInfo,
-                products:productsID,
+                {contact: {
+                    firstName: document.getElementById("firstName").value,
+                    lastName: document.getElementById("lastName").value,
+                    address: document.getElementById("address").value,
+                    city: document.getElementById("city").value,
+                    email: document.getElementById("email").value
+                },
+                products: contentLS.map(x => x.id)
             }),
             headers : {
                 'Accept' : 'application/json',
@@ -240,7 +237,9 @@ function valideForm () {
         })
         .then((response) => response.json())
         .then((data) => {
-            document.location = `./confirmation.html?id=${data.orderId}`; // Redirige l'user vers ce lien
+            contentLS.length = 0; // On vide le tableau
+            saveBasket("product_list", contentLS);
+            document.location = `./confirmation.html?id=${data.orderId}`;
         })
     })
 }

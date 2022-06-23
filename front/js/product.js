@@ -1,10 +1,10 @@
 // DOM & Déclarations globales 
 
 let monApi = "http://localhost:3000/api/products/";
-const str = window.location; // Return l'emplacement actuel du document (ici son URL)
-const url = new URL(str); // Créer une URL avec cette string
-const idProduit = url.searchParams.get("id"); // Récup' la partie ID de l'URL
-monApi += `${idProduit}`; // Return API de base + ID Produit
+const str = window.location; 
+const url = new URL(str); 
+const idProduit = url.searchParams.get("id"); 
+monApi += `${idProduit}`; // Nouvelle URL d'api avec l'ID à la fin
 const divImage = document.querySelector(".item__img");
 const title = document.querySelector("#title");
 const price = document.querySelector("#price");
@@ -13,12 +13,12 @@ const couleurs = document.querySelector("#colors");
 const bouton = document.querySelector("#addToCart");
 
 /**
- * Sert à mettre à jour le LS
- * @param {*} key Clé LS
+ * Mis à jour du localstorage
+ * @param {string} key Clé LS
  * @param {*} value Données à stocker / mettre à jour dans le LS (un tableau dans notre cas)
  */
  function saveBasket(key, value) {
-    localStorage.setItem(key, JSON.stringify(value)) // json.stringify convertit une valeur JS en chaîne JSON
+    localStorage.setItem(key, JSON.stringify(value)) // json.stringify convertit une valeur JS en str JSON
 };
 
 
@@ -37,23 +37,23 @@ function ProductInfo(apiData) {
 
 /**
  * Ajoute l'article dans le panier selon et s'il est déjà présent, actualise sa quantité
- * @param {*} locStoData Données du localstorage (ici c'est un tableau)
- * @param {*} apiData Données de l'API
+ * @param {Array} locStoData Données du localstorage (ici c'est un tableau)
+ * @param {Object} apiData Données de l'API
+ * @param {string} apiData._id Id du produit
  * @param {*} productData Données du produits à push
  */
 function addToLocalStorage(locStoData, apiData, productData) {
     let foundProduct = locStoData.find(elementInLS => elementInLS.id === productData.id && elementInLS.color === productData.color); // Compare l'ID et la couleur du produit à ajouter à ceux des produits dans le LS
-    if(foundProduct) { // S'ils sont identiques (if (foundProduct != undifined))
+    if(foundProduct) {
         foundProduct.qty += productData.qty; // Update qty 
         alert(`La quantité de votre article a été actualisée !`)
     } 
-    if (foundProduct == undefined) { // Sinon, si l'ID et la couleur sont différents 
-        locStoData.push(ProductInfo(apiData)); // Je push mon nouvel objet dans mon tableau du LS
+    if (foundProduct == undefined) { 
+        locStoData.push(ProductInfo(apiData)); 
         alert("L'article a bien été ajouté dans votre panier.")
     }
     saveBasket("product_list", locStoData)  
 };
-
 fetch(monApi)
     .then((response) => response.json())
     .then((data) => {
@@ -73,10 +73,10 @@ fetch(monApi)
         bouton.addEventListener("click", function() {
             if (localStorage.getItem("product_list")) {  // Si la clé "product_list" du LS n'est pas vide
                 let contentLS = JSON.parse(localStorage.getItem(`product_list`)); // Récup' et convert le contenu du LS en objet JS (il est en string de base)
-                addToLocalStorage(contentLS, data, ProductInfo(data)); // On push l'objet grâce à ProductInfo
+                addToLocalStorage(contentLS, data, ProductInfo(data)); 
             }
-            else { // Sinon, si elle est vide
-                let contentLS = []; // Créer le tableau qui servira de valeur à cette clé
+            else { 
+                let contentLS = [];
                 addToLocalStorage(contentLS, data, ProductInfo(data));
             } 
         })
