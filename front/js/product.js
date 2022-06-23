@@ -1,5 +1,4 @@
 // DOM & Déclarations globales 
-
 let monApi = "http://localhost:3000/api/products/";
 const str = window.location; 
 const url = new URL(str); 
@@ -15,22 +14,22 @@ const bouton = document.querySelector("#addToCart");
 /**
  * Mis à jour du localstorage
  * @param {string} key Clé LS
- * @param {*} value Données à stocker / mettre à jour dans le LS (un tableau dans notre cas)
+ * @param {Array} data Données à stocker / mettre à jour dans le LS (un tableau dans notre cas)
  */
- function saveBasket(key, value) {
-    localStorage.setItem(key, JSON.stringify(value)) // json.stringify convertit une valeur JS en str JSON
+ function saveBasket(key, data) {
+    localStorage.setItem(key, JSON.stringify(data)) // json.stringify convertit une valeur JS en str JSON
 };
 
 
 /**
  * Créér et retourne l'objet qui sera push dans tabProduct avec les infos produits déjà existantes sur la page (price/qty/color) et celle de l'api (id)
  * @param {*} apiData 
- * @returns L'objet est retourné
+ * @returns
  */
 function ProductInfo(apiData) {
     return productObject = {
         id : apiData._id,
-        qty : parseInt(document.querySelector("#quantity").value), // parseInt : Convert type str into type nbr (entier)
+        qty : parseInt(document.querySelector("#quantity").value),
         color : document.querySelector("#colors").value
     };
 };
@@ -72,7 +71,7 @@ fetch(monApi)
         };
         bouton.addEventListener("click", function() {
             if (localStorage.getItem("product_list")) {  // Si la clé "product_list" du LS n'est pas vide
-                let contentLS = JSON.parse(localStorage.getItem(`product_list`)); // Récup' et convert le contenu du LS en objet JS (il est en string de base)
+                let contentLS = JSON.parse(localStorage.getItem(`product_list`)); //JSON.parse convertit une str JSON en obj JS
                 addToLocalStorage(contentLS, data, ProductInfo(data)); 
             }
             else { 

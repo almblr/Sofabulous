@@ -1,7 +1,7 @@
-let monApi = "http://localhost:3000/api/products/"; // On déclare une variable pour stocker l'API
+let monApi = "http://localhost:3000/api/products/";
 const section = document.querySelector("#items");
 
-fetch(monApi) // Fetch fait un appel sur l'API et retourne une promesse
+fetch(monApi)
     .then((response) => response.json()) // .json pour rendre la réponse "exploitable" en JS
     .then((data) => {
         for (let item of data) {

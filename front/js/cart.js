@@ -2,11 +2,9 @@ let sectionItem = document.querySelector("#cart__items");
 const submitButton = document.getElementById("order");
 let contentLS = JSON.parse(localStorage.getItem(`product_list`));
 
-
-function saveBasket(key, value) {
-    localStorage.setItem(key, JSON.stringify(value))
+function saveBasket(key, data) {
+    localStorage.setItem(key, JSON.stringify(data)) 
 };
-
 
 // Retourne promises (un array de promesses) qui contient tous mes affichages de produits en HTML
 function fillCart() {
@@ -53,14 +51,15 @@ function fillCart() {
 }
 /////////////////////////////////////
 /////////////////////////////////////
-/////////////////////////////////////
 
 const allPromises = fillCart(); // Pour éviter d'écrire Promise.all(fillCart()).then car pas très visuel
 Promise.all(allPromises).then(() => { 
-    changeQuantity();
-    deleteItem();
     getTotalQuantity();
     getTotalPrice();
+    changeQuantity();
+    deleteButton();
+    initValidation();
+    valideForm();
 });
 
 // Permet de retourner l'index du produit
@@ -71,57 +70,13 @@ function getProductIndex(item) {
     return idxProduct;
 }
 
-// Changer la quantité d'un article
-function changeQuantity() {
-    let allQtyInputs = document.querySelectorAll(".itemQuantity");
-    allQtyInputs.forEach(itemInput => {
-        itemInput.addEventListener("change", () => {
-            let itemQty = parseInt(itemInput.value);
-            if (itemInput.value > 100) {
-                alert("La valeur maximale est de 100 canapés.");
-                itemInput.value = 100;
-                itemQty = 100;
-                contentLS[getProductIndex(itemInput)].qty = itemQty;
-                getTotalQuantity();
-                getTotalPrice();
-            }
-            if (itemInput.value >= 1 && itemInput.value <= 100) {
-                contentLS[getProductIndex(itemInput)].qty = itemQty; // La qty du produit dans le LS prend la valeur de l'input
-                getTotalQuantity();
-                getTotalPrice();
-            }
-            if (itemInput.value < 1) {
-                itemInput.closest("article").remove(); // Suppression au niveau du DOM
-                contentLS.splice(getProductIndex(itemInput), 1); // Select one element from productIdx & delete it (donc lui-même)
-                getTotalQuantity();
-                getTotalPrice();
-            }
-            saveBasket("product_list", contentLS);
-        })
-    })
-};
-
-// Supprimer un article du DOM et du LS
-function deleteItem() {
-    let deleteButtons = document.querySelectorAll(".deleteItem");
-    deleteButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            button.closest("article").remove(); 
-            contentLS.splice(getProductIndex(button), 1);
-            saveBasket("product_list", contentLS)  
-            getTotalQuantity();
-            getTotalPrice();
-        })
-    })
-};
-
 // Calcule la quantité totale
 function getTotalQuantity() { 
     if (contentLS.length == 0) {
         document.getElementById("totalQuantity").innerText = "0";
         document.getElementById("totalPrice").innerText = "0";
     } else {
-        document.getElementById("totalQuantity").innerText = contentLS.map(item => parseInt(item.qty)).reduce((acc, i) => acc + i); // Éviter de faire une boucle avec une déclaration de sum etc...
+        document.getElementById("totalQuantity").innerText = contentLS.map(item => parseInt(item.qty)).reduce((acc, i) => acc + i); // Évite de faire une boucle avec une déclaration de sum etc...
     }
 };
 
@@ -135,40 +90,83 @@ function getTotalPrice() {
             arrPrices.push(((Number(itemPrice.textContent.replace("€","")))*itemQty));
         }
         document.getElementById("totalPrice").innerText = arrPrices.reduce((acc, x) => acc + x);
-    } else {
-        getTotalQuantity();  
-    }      
+    }
+    getTotalQuantity(); // Permet l'affichage de qty totale si dans tous les cas, même si le LS est vide
 };
 
+function getTotalPriceAndQuantity() {
+    getTotalQuantity();
+    getTotalPrice();
+};
 
+// Suppression d'un item
+function deleteItem(element) {
+    element.closest("article").remove(); 
+    contentLS.splice(getProductIndex(element), 1);
+    saveBasket("product_list", contentLS);  
+    getTotalPriceAndQuantity();
+};
+
+// Suppression d'un item quand l'user clique sur "Supprimer"
+function deleteButton() {
+    let deleteButtons = document.querySelectorAll(".deleteItem");
+    deleteButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        deleteItem(button);
+        })
+    })
+};
+
+// Changer la quantité d'un article
+function changeQuantity() {
+    let allQtyInputs = document.querySelectorAll(".itemQuantity");
+    allQtyInputs.forEach(itemInput => {
+        itemInput.addEventListener("change", () => {
+            let itemQty = parseInt(itemInput.value);
+            if (itemInput.value > 100) {
+                alert("La valeur maximale est de 100 canapés.");
+                itemInput.value = 100;
+                itemQty = 100;
+                contentLS[getProductIndex(itemInput)].qty = itemQty;
+                getTotalPriceAndQuantity()
+            } else if (itemInput.value < 1) {
+                deleteItem(itemInput)
+            } else {
+                contentLS[getProductIndex(itemInput)].qty = itemQty;
+                getTotalPriceAndQuantity()
+            }
+            saveBasket("product_list", contentLS);
+        })
+    })
+};
 
 const inputValidations = {
     firstName : {
-        regex:"^[A-Za-zÀ-ü-' ]+$", // mettre les / des regex
+        regex:/^[A-Za-zÀ-ü-' ]+$/,
         frenchName:"Prénom"
     },
     lastName : {
-        regex:"^[A-Za-zÀ-ü-' ]+$",
+        regex:/^[A-Za-zÀ-ü-' ]+$/,
         frenchName:"Nom"
     },
     address : {
-        regex:"^[0-9]+\\s[A-Za-zÀ-ü-'\\s]+",
+        regex:/^[0-9]+\s[A-Za-zÀ-ü-'\s]+/,
         frenchName:"Adresse"
     },
     city : {
-        regex:"^[A-Za-zÀ-ü-' ]+$",
+        regex:/^[A-Za-zÀ-ü-' ]+$/,
         frenchName:"Ville"
     },
     email : {
-        regex:".+\@.+\..+",
+        regex:/.+\@.+\..+/,
         frenchName:"Email"
     }
 };
 
 // Mise en place du test pour comparer la regex à ce qui a été saisi dans l'input
-function testInput(nameInput, regexInput) {
+function testInput(nameInput, regexObj) {
     let input = document.getElementById(nameInput);
-    let regex = new RegExp(regexInput);
+    let regex = regexObj;
     let test = regex.test(input.value);
     if (test) {
         return true;
@@ -203,7 +201,6 @@ function initValidation() {
     })
 }; 
 
-initValidation();
 
 // Deuxième test du formulaire qui se fait au niveau du click 
 function valideForm () {
@@ -213,7 +210,7 @@ function valideForm () {
             const validationRule = inputValidations[validationKey];
             console.log(validationRule);
             if (testInput(validationKey, validationRule.regex)) {
-                continue; // Passe au test de l'input suivant
+                continue; // Ignore et passe à la boucle suivante (au test suivant)
             } else {
                 return; // Quitte la boucle
             }
@@ -243,4 +240,3 @@ function valideForm () {
         })
     })
 }
-valideForm();
