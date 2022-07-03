@@ -6,7 +6,7 @@ function saveBasket(key, data) {
     localStorage.setItem(key, JSON.stringify(data)) 
 };
 
-// Retourne promises (un array de promesses) qui contient tous mes affichages de produits en HTML
+// Retourne promises (un array de promesses) qui contient tous mes affichages de produits
 function fillCart() {
     if (contentLS === null) { // Ne fait rien
     } else {
@@ -91,7 +91,7 @@ function getTotalPrice() {
         }
         document.getElementById("totalPrice").innerText = arrPrices.reduce((acc, x) => acc + x);
     }
-    getTotalQuantity(); // Permet l'affichage de qty totale si dans tous les cas, même si le LS est vide
+    getTotalQuantity(); // Permet l'affichage de qty totale même si le panier est vide
 };
 
 function getTotalPriceAndQuantity() {
@@ -181,7 +181,7 @@ function initValidation() {
     inputs.forEach(input => {
         input.addEventListener("change", () => {
             for (let key in inputValidations) { 
-                if (input.name === key) { // Si le nom de l'input en HTML correspond à la clé (key) du tableau
+                if (input.name === key) { // Si l'attribut name de l'input en HTML correspond à la clé (key) du tableau
                     let test = testInput(key, inputValidations[key].regex)
                     let errorMsg = input.nextElementSibling;
                     if (test === true) { 

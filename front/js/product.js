@@ -70,7 +70,7 @@ fetch(monApi)
             couleurs.appendChild(newOption);
         };
         bouton.addEventListener("click", function() {
-            if (localStorage.getItem("product_list")) {  // Si la clé "product_list" du LS n'est pas vide
+            if (localStorage.getItem("product_list")) {
                 let contentLS = JSON.parse(localStorage.getItem(`product_list`)); //JSON.parse convertit une str JSON en obj JS
                 addToLocalStorage(contentLS, data, ProductInfo(data)); 
             }

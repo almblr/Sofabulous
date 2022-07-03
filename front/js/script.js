@@ -2,7 +2,7 @@ let monApi = "http://localhost:3000/api/products/";
 const section = document.querySelector("#items");
 
 fetch(monApi)
-    .then((response) => response.json()) // .json pour rendre la réponse "exploitable" en JS
+    .then((response) => response.json())
     .then((data) => {
         for (let item of data) {
             const newLink = document.createElement("a");
