@@ -26,8 +26,20 @@ Clone this repo. From the "back" folder of the project, run  `npm install`. You 
 
 ## Screenshots
 
-  
-- [Home page](https://imgur.com/zaHulI7)
-- [Product page](https://imgur.com/Z2RIrse)
-- [Cart page](https://imgur.com/pSLiSal)
-- [Confirmation](https://imgur.com/ZymPEcr)
+- Home page
+
+![Home page](https://user-images.githubusercontent.com/91732412/194862722-4974172d-909d-4782-ab37-38db0b092929.png)
+
+- Product page
+
+[Kanap2](https://user-images.githubusercontent.com/91732412/194862867-7829be1b-636b-47ba-b700-7a79c4636df4.png)
+
+- Cart page
+
+![Cart page](https://user-images.githubusercontent.com/91732412/194862951-61cbd84a-b510-4276-a4b4-f2548e3f4727.png)
+
+- Confirmation page
+
+![Kanap4](https://user-images.githubusercontent.com/91732412/194863044-4a4fcbcb-6747-419e-906a-b07f6fafb26e.png)
+
+
