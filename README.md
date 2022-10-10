@@ -32,7 +32,7 @@ Clone this repo. From the "back" folder of the project, run  `npm install`. You 
 
 - Product page
 
-[Kanap2](https://user-images.githubusercontent.com/91732412/194862867-7829be1b-636b-47ba-b700-7a79c4636df4.png)
+![Product page](https://user-images.githubusercontent.com/91732412/194862867-7829be1b-636b-47ba-b700-7a79c4636df4.png)
 
 - Cart page
 
