@@ -1,6 +1,7 @@
 # P5 - Kanap
 
 **Présentation**
+
 Kanap est un site permettant de commander des canapés aux différents coloris afin de mieux aménager votre salon. Il s’agit d’un projet dans le cadre de la formation  Développeur Web  d’OpenClassrooms. 
 Pour ce projet, le back end ainsi qu'une partie du front end (l'HTML et le CSS) ont été fournis. L'objectif était de rendre toutes les pages dynamiques grâce à **JavaScript** natif. 
 Il fallait entre autres, faire des appels API pour récolter les données des canapés, avoir une page produit pour chacun d'entre eux, ajouter des produits au panier grâce au localstorage et valider une commande grâce à un formulaire.
@@ -14,6 +15,7 @@ Clonez ce repository. Depuis le fichier pack du projet, exécutez la commande `n
 _________________
 
 **Introduction**
+
 Kanap is a website allowing you to order sofas in different colors in order to better furnish your living room. This is a project that's part of the OpenClassrooms Web Developer training.
 For this project, the back end as well as part of the front end (HTML and CSS) were provided. The goal was to make all pages dynamic with native **JavaScript**.
 The features included making API calls to collect sofa data, having a product page for each of them, adding products to the basket using localstorage and validating an order using a form.
