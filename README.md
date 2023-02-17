@@ -6,7 +6,7 @@ Pour ce projet, le back end ainsi qu'une partie du front end (l'HTML et le CSS) 
 Il fallait entre autres, faire des appels API pour récolter les données des canapés, avoir une page produit pour chacun d'entre eux, ajouter des produits au panier grâce au localstorage et valider une commande grâce à un formulaire.
 
 ### Prérequis back end
-Vous aurez besoin d'avoir Node et `npm` installés localement sur votre machine.
+Vous aurez besoin d'avoir Node.js installé localement sur votre machine.
 
 ### Installation du back end
 Clonez ce repository. Depuis le fichier pack du projet, exécutez la commande `npm install`. Vous pourrez suite à ça lancer le serveur grâce à la commande `node server`. Ce dernier devrait s'exécuter sur `localhost` avec le port `3000` par défaut. Si le serveur s'exécute sur un autre port pour une quelconque raison, ce port devrait s'afficher dans la console, par exemple `Listening on port 3001`
@@ -19,7 +19,7 @@ For this project, the back end as well as part of the front end (HTML and CSS) w
 The features included making API calls to collect sofa data, having a product page for each of them, adding products to the basket using localstorage and validating an order using a form.
 
 ### [](https://github.com/soonbtf/P5_Canap#back-end-prerequisites)Back end Prerequisites
-You will need to have Node and  `npm`  installed locally on your machine.
+You need to have Node.js installed locally on your machine.
 
 ### [](https://github.com/soonbtf/P5_Canap#back-end-installation)Back end Installation
 Clone this repo. From the "back" folder of the project, run  `npm install`. You can then run the server with  `node server`. The server should run on  `localhost`  with default port  `3000`. If the server runs on another port for any reason, this is printed to the console when the server starts, e.g.  `Listening on port 3001`.
