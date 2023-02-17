@@ -9,7 +9,7 @@ Il fallait entre autres, faire des appels API pour récolter les données des ca
 Vous aurez besoin d'avoir Node.js installé localement sur votre machine.
 
 ### Installation du back end
-Clonez ce repository. Depuis le fichier pack du projet, exécutez la commande `npm install`. Vous pourrez suite à ça lancer le serveur grâce à la commande `node server`. Ce dernier devrait s'exécuter sur `localhost` avec le port `3000` par défaut. Si le serveur s'exécute sur un autre port pour une quelconque raison, ce port devrait s'afficher dans la console, par exemple `Listening on port 3001`
+Clonez ce repository. Depuis le dossier back du projet, exécutez la commande `npm install`. Vous pourrez suite à ça lancer le serveur grâce à la commande `node server`. Ce dernier devrait s'exécuter sur `localhost` avec le port `3000` par défaut. Si le serveur s'exécute sur un autre port pour une quelconque raison, ce port devrait s'afficher dans la console, par exemple `Listening on port 3001`
 
 _________________
 
